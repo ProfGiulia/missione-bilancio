@@ -3,7 +3,16 @@ import { useState } from 'react'
 import { missionTwoErrors } from './missionTwoData'
 import { balanceCategories, incomeCategories } from './data'
 import './MissionTwo.css'
+function shuffleArray(array) {
+  const shuffled = [...array]
 
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+
+  return shuffled
+}
 function formatEuro(value) {
   return new Intl.NumberFormat('it-IT', {
     style: 'currency',
@@ -26,6 +35,9 @@ function MissionTwo({ onComplete, onExit }) {
     ...balanceCategories.liabilities,
     ...incomeCategories,
   ]
+  const shuffledCategories = useState(() =>
+    shuffleArray(allCategories)
+  )[0]
 
   function handleAnswer(id, value) {
     if (submitted) return
@@ -139,18 +151,18 @@ function MissionTwo({ onComplete, onExit }) {
               >
                 <option value="">Seleziona la categoria corretta</option>
 
-                {allCategories
+                {shuffledCategories
                   .filter(item =>
                     error.statement === 'Stato patrimoniale'
                       ? item.id !== 'valore_produzione' &&
-                        item.id !== 'costi_esterni' &&
-                        item.id !== 'costo_personale' &&
-                        item.id !== 'ammortamenti' &&
-                        item.id !== 'gestione_finanziaria' &&
-                        item.id !== 'imposte'
+                      item.id !== 'costi_esterni' &&
+                      item.id !== 'costo_personale' &&
+                      item.id !== 'ammortamenti' &&
+                      item.id !== 'gestione_finanziaria' &&
+                      item.id !== 'imposte'
                       : incomeCategories.some(
-                          category => category.id === item.id
-                        )
+                        category => category.id === item.id
+                      )
                   )
                   .map(item => (
                     <option key={item.id} value={item.id}>

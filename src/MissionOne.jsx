@@ -7,7 +7,16 @@ import {
   incomeCategories,
 } from './data'
 import './MissionOne.css'
+function shuffleArray(array) {
+  const shuffled = [...array]
 
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+
+  return shuffled
+}
 function formatEuro(value) {
   return new Intl.NumberFormat('it-IT', {
     style: 'currency',
@@ -34,8 +43,7 @@ function ClassificationSection({
     }))
   }, [items, categories, answers])
 
-  const unassigned = items.filter(item => !answers[item.id])
-
+const unassigned = items.filter(item => !answers[item.id])
   function handleDrop(categoryId) {
     if (!draggedId || disabled) return
     onAnswer(draggedId, categoryId)
@@ -153,6 +161,9 @@ function ClassificationSection({
 
 function MissionOne({ onComplete, onExit }) {
 const [step, setStep] = useState('assets')
+const [shuffledAssets] = useState(() => shuffleArray(balanceSheet.assets))
+const [shuffledLiabilities] = useState(() => shuffleArray(balanceSheet.liabilities))
+const [shuffledIncome] = useState(() => shuffleArray(incomeStatement))
   const [assetAnswers, setAssetAnswers] = useState({})
   const [liabilityAnswers, setLiabilityAnswers] = useState({})
   const [incomeAnswers, setIncomeAnswers] = useState({})
@@ -165,12 +176,12 @@ const [step, setStep] = useState('assets')
     { id: 'income', label: 'Conto economico' },
   ]
 
-  const currentItems =
-    step === 'assets'
-      ? balanceSheet.assets
-      : step === 'liabilities'
-        ? balanceSheet.liabilities
-        : incomeStatement
+const currentItems =
+  step === 'assets'
+    ? shuffledAssets
+    : step === 'liabilities'
+      ? shuffledLiabilities
+      : shuffledIncome
 
   const currentCategories =
     step === 'assets'
